@@ -27,7 +27,9 @@ func provider() *schema.Provider {
 	}
 }
 
-type providerMeta *client.Client
+type providerMeta struct {
+	client *client.Client
+}
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	var config = client.Config{
@@ -38,9 +40,13 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	if client, err := config.MakeClient(); err != nil {
 		return nil, err
 	} else {
-		log.Printf("[INFO] Kontena Client: %v", client)
+		var meta = providerMeta{
+			client: client,
+		}
 
-		return providerMeta(client), nil
+		log.Printf("[INFO] Kontena: client %v", meta.client)
+
+		return meta, nil
 	}
 }
 
