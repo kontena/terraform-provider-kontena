@@ -24,6 +24,18 @@ func resourceKontenaGrid() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 			},
+			"subnet": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
+			"supernet": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+			},
 			"default_affinity": &schema.Schema{
 				Type: schema.TypeList,
 				Elem: &schema.Schema{
@@ -40,6 +52,15 @@ func resourceKontenaGrid() *schema.Resource {
 	}
 }
 
+func syncKontenaGrid(rd *schema.ResourceData, grid api.Grid) {
+	rd.Set("name", grid.Name)
+	rd.Set("initial_size", grid.InitialSize)
+	rd.Set("token", grid.Token)
+	rd.Set("subnet", grid.Subnet)
+	rd.Set("supernet", grid.Supernet)
+	rd.Set("default_affinity", grid.DefaultAffinity)
+}
+
 func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(providerMeta)
 	var gridParams = api.GridPOST{
@@ -47,10 +68,21 @@ func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error 
 		InitialSize: rd.Get("initial_size").(int),
 	}
 
+	// XXX: no support for DefaultAffinity; can only update it on a later apply
 	if value, ok := rd.GetOk("token"); ok {
 		var token = value.(string)
 
 		gridParams.Token = &token
+	}
+	if value, ok := rd.GetOk("subnet"); ok {
+		var subnet = value.(string)
+
+		gridParams.Subnet = &subnet
+	}
+	if value, ok := rd.GetOk("supernet"); ok {
+		var supernet = value.(string)
+
+		gridParams.Supernet = &supernet
 	}
 
 	log.Printf("[INFO] Kontena Grid: Create %#v", gridParams)
@@ -59,6 +91,7 @@ func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error 
 		return err
 	} else {
 		rd.SetId(grid.String())
+		syncKontenaGrid(rd, grid)
 	}
 
 	return nil
@@ -72,18 +105,13 @@ func resourceKontenaGridRead(rd *schema.ResourceData, meta interface{}) error {
 	if grid, err := providerMeta.client.Grids.Get(rd.Id()); err != nil {
 		return err
 	} else {
-		rd.Set("name", grid.Name)
-		rd.Set("initial_size", grid.InitialSize)
-		rd.Set("token", grid.Token)
-
-		rd.Set("default_affinity", grid.DefaultAffinity)
+		syncKontenaGrid(rd, grid)
 	}
 
 	return nil
 }
 
 func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error {
-
 	var providerMeta = meta.(providerMeta)
 	var gridParams = api.GridPUT{}
 
@@ -102,7 +130,7 @@ func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error 
 	if grid, err := providerMeta.client.Grids.Update(rd.Id(), gridParams); err != nil {
 		return err
 	} else {
-		rd.Set("default_affinity", grid.DefaultAffinity)
+		syncKontenaGrid(rd, grid)
 	}
 
 	return nil
