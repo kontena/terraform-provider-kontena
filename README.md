@@ -24,5 +24,7 @@ kontena_grid.test:
   subnet = 10.81.0.0/16
   supernet = 10.80.0.0/12
   token = 8TyJCGXvHGLVfOIN/44RyeqEQs1MTMiDVTO/HJjQ+bJHrM7ZGOMZdzpbJyKS8P6ObU4xxf/M6hM8vRCqO3OUOQ==
-  trusted_subnets.# = 0
+  trusted_subnets.# = 1
+  trusted_subnets.0 = 192.168.66.0/24
+
 ```
