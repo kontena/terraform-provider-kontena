@@ -43,6 +43,13 @@ func resourceKontenaGrid() *schema.Resource {
 				},
 				Optional: true,
 			},
+			"trusted_subnets": &schema.Schema{
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional: true,
+			},
 		},
 
 		Create: resourceKontenaGridCreate,
@@ -59,6 +66,7 @@ func syncKontenaGrid(rd *schema.ResourceData, grid api.Grid) {
 	rd.Set("subnet", grid.Subnet)
 	rd.Set("supernet", grid.Supernet)
 	rd.Set("default_affinity", grid.DefaultAffinity)
+	rd.Set("trusted_subnets", grid.TrustedSubnets)
 }
 
 func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error {
@@ -68,7 +76,8 @@ func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error 
 		InitialSize: rd.Get("initial_size").(int),
 	}
 
-	// XXX: no support for DefaultAffinity; can only update it on a later apply
+	// XXX: no POST support for default_affinity or trusted_subnets
+	//     can only update it on a later apply
 	if value, ok := rd.GetOk("token"); ok {
 		var token = value.(string)
 
@@ -124,8 +133,17 @@ func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error 
 
 		gridParams.DefaultAffinity = &defaultAffinity
 	}
+	if rd.HasChange("trusted_subnets") {
+		var trustedSubnets = make(api.GridTrustedSubnets, 0)
 
-	log.Printf("[INFO] Kontena Grid %v: Update %#v (default_affinity=%#v)", rd.Id(), gridParams, gridParams.DefaultAffinity)
+		for _, value := range rd.Get("trusted_subnets").([]interface{}) {
+			trustedSubnets = append(trustedSubnets, value.(string))
+		}
+
+		gridParams.TrustedSubnets = &trustedSubnets
+	}
+
+	log.Printf("[INFO] Kontena Grid %v: Update %#v", rd.Id(), gridParams)
 
 	if grid, err := providerMeta.client.Grids.Update(rd.Id(), gridParams); err != nil {
 		return err
