@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/kontena/terraform-provider-kontena/api"
+	"github.com/kontena/terraform-provider-kontena/client"
 )
 
 func resourceKontenaGrid() *schema.Resource {
@@ -111,12 +112,18 @@ func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error 
 func resourceKontenaGridRead(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(providerMeta)
 
-	log.Printf("[INFO] Kontena Grid %v: Read", rd.Id())
+	if grid, err := providerMeta.client.Grids.Get(rd.Id()); err == nil {
+		log.Printf("[INFO] Kontena Grid %v: Read: %#v", rd.Id(), grid)
 
-	if grid, err := providerMeta.client.Grids.Get(rd.Id()); err != nil {
-		return err
-	} else {
 		syncKontenaGrid(rd, grid)
+	} else if _, ok := err.(client.NotFoundError); ok {
+		log.Printf("[INFO] Kontena Grid %v: Read gone", rd.Id())
+
+		rd.SetId("")
+	} else {
+		log.Printf("[INFO] Kontena Grid %v: Read error: %v", rd.Id(), err)
+
+		return err
 	}
 
 	return nil
