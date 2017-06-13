@@ -1,8 +1,11 @@
 package provider
 
 import (
+	"log"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/kontena/terraform-provider-kontena/client"
 )
 
 func provider() *schema.Provider {
@@ -12,7 +15,7 @@ func provider() *schema.Provider {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"initial_admin_code": &schema.Schema{
+			"access_token": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -20,6 +23,24 @@ func provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"kontena_grid": resourceKontenaGrid(),
 		},
+		ConfigureFunc: providerConfigure,
+	}
+}
+
+type providerMeta *client.Client
+
+func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	var config = client.Config{
+		URL:         d.Get("url").(string),
+		AccessToken: d.Get("access_token").(string),
+	}
+
+	if client, err := config.MakeClient(); err != nil {
+		return nil, err
+	} else {
+		log.Printf("[INFO] Kontena Client: %v", client)
+
+		return providerMeta(client), nil
 	}
 }
 
