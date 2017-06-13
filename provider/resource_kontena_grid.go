@@ -13,10 +13,12 @@ func resourceKontenaGrid() *schema.Resource {
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"initial_size": &schema.Schema{
 				Type:     schema.TypeInt,
 				Required: true,
+				ForceNew: true,
 			},
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
