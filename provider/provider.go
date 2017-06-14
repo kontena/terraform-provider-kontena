@@ -39,6 +39,8 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 
 	if client, err := config.MakeClient(); err != nil {
 		return nil, err
+	} else if err := client.Ping(); err != nil {
+		return nil, err
 	} else {
 		var meta = providerMeta{
 			client: client,
