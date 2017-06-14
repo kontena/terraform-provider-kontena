@@ -22,6 +22,7 @@ func provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"kontena_grid": resourceKontenaGrid(),
+			"kontena_node": resourceKontenaNode(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
