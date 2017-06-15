@@ -37,11 +37,6 @@ func tokenID(token *client.Token) string {
 	return fmt.Sprintf("%s", token.AccessToken)
 }
 
-func resourceKontenaTokenSync(rd *schema.ResourceData, providerMeta *providerMeta, token *client.Token) {
-	rd.Set("token", token.AccessToken)
-	rd.SetId(tokenID(token))
-}
-
 func resourceKontenaTokenCreate(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(*providerMeta)
 	var code = rd.Get("code").(string)
@@ -52,24 +47,44 @@ func resourceKontenaTokenCreate(rd *schema.ResourceData, meta interface{}) error
 	} else {
 		log.Printf("[DEBUG] Kontena Token: Create code=%v: %#v", code, clientToken)
 
-		resourceKontenaTokenSync(rd, providerMeta, clientToken)
+		rd.Set("token", clientToken.AccessToken)
+		rd.SetId(tokenID(clientToken))
 	}
 
 	return nil
 }
 
 func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
+	var providerMeta = meta.(*providerMeta)
+
+	var code = rd.Get("code").(string)
 	var token = rd.Get("token").(string)
 
 	var clientToken = client.MakeToken(token)
 
-	log.Printf("[INFO] Kontena Token %v: Read: %#v", rd.Id(), clientToken)
+	// check token still exists
+	if apiClient, err := providerMeta.connectClient(clientToken); err != nil {
+		return err
+	} else if user, err := apiClient.Users.GetUser(); err == nil {
+		log.Printf("[INFO] Kontena Token %v: Read code=%v token=%v ok: %#v", rd.Id(), code, token, user)
+	} else if forbiddenError, ok := err.(client.ForbiddenError); ok {
+		log.Printf("[INFO] Kontena Token %v: Read code=%v token=%v gone: %v", rd.Id(), code, token, forbiddenError)
+
+		rd.SetId("")
+
+	} else {
+		log.Printf("[INFO] Kontena Token %v: Read code=%v token=%v err: %v", rd.Id(), code, token, err)
+
+		return err
+	}
 
 	return nil
 }
 
 func resourceKontenaTokenDelete(rd *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] Kontena Token %v: Delete", rd.Id())
+
+	// TODO: revoke
 
 	return nil
 }

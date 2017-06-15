@@ -39,7 +39,7 @@ func (providerMeta *providerMeta) connectClient(token *client.Token) (*client.Cl
 	var config = providerMeta.config
 	config.Token = token
 
-	log.Printf("[INFO] Kontena Resource: config %#v", config)
+	log.Printf("[INFO] Kontena Resource: config %#v (token=%#v)", config, token)
 
 	return config.Connect()
 }
