@@ -22,12 +22,9 @@ func provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"kontena_token": schema.DataSourceResourceShim("kontena_token", dataKontenaToken()),
+			"kontena_token": resourceKontenaToken(),
 			"kontena_grid":  resourceKontenaGrid(),
 			"kontena_node":  resourceKontenaNode(),
-		},
-		DataSourcesMap: map[string]*schema.Resource{
-			"kontena_token": dataKontenaToken(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
