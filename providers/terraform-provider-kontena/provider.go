@@ -1,4 +1,4 @@
-package provider
+package main
 
 import (
 	"log"
@@ -7,6 +7,10 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/kontena/terraform-provider-kontena/client"
 )
+
+func Provider() terraform.ResourceProvider {
+	return provider()
+}
 
 func provider() *schema.Provider {
 	return &schema.Provider{
@@ -58,8 +62,4 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	return &meta, nil
-}
-
-func Provider() terraform.ResourceProvider {
-	return provider()
 }
