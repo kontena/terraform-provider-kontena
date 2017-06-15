@@ -26,7 +26,7 @@ func provider() *schema.Provider {
 			"kontena_node": resourceKontenaNode(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"kontena_token": resourceKontenaToken(),
+			"kontena_token": dataKontenaToken(),
 		},
 		ConfigureFunc: providerConfigure,
 	}

@@ -13,7 +13,7 @@ var kontenaTokenSchema = &schema.Schema{
 	Optional: true,
 }
 
-func resourceKontenaToken() *schema.Resource {
+func dataKontenaToken() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"code": &schema.Schema{
@@ -27,11 +27,8 @@ func resourceKontenaToken() *schema.Resource {
 			},
 		},
 
-		Exists: resourceKontenaTokenExists,
-		//Create: resourceKontenaTokenCreate,
-		Read: resourceKontenaTokenRead,
-		//Update: resourceKontenaTokenUpdate,
-		//Delete: resourceKontenaTokenDelete,
+		Exists: dataKontenaTokenExists,
+		Read:   dataKontenaTokenRead,
 	}
 }
 
@@ -49,19 +46,13 @@ func exchangeToken(rd *schema.ResourceData, providerMeta *providerMeta, code str
 	}
 }
 
-func resourceKontenaTokenCreate(rd *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Kontena Token: Create")
-
-	return nil
-}
-
-func resourceKontenaTokenExists(rd *schema.ResourceData, meta interface{}) (bool, error) {
+func dataKontenaTokenExists(rd *schema.ResourceData, meta interface{}) (bool, error) {
 	log.Printf("[INFO] Kontena Token %v: Exists", rd.Id())
 
 	return false, nil
 }
 
-func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
+func dataKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(*providerMeta)
 	var code = rd.Get("code").(string)
 	var token = rd.Get("token").(string)
@@ -90,18 +81,6 @@ func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
 
 	rd.SetId(id)
 	providerMeta.registerToken(id, clientToken)
-
-	return nil
-}
-
-func resourceKontenaTokenUpdate(rd *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Kontena Token %v: Update", rd.Id())
-
-	return nil
-}
-
-func resourceKontenaTokenDelete(rd *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Kontena Token %v: Delete", rd.Id())
 
 	return nil
 }
