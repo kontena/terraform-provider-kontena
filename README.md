@@ -6,6 +6,8 @@ Requires Go 1.8 for [`github.com/hashicorp/terraform`](https://github.com/hashic
 
 ```
 $ export GOPATH=~/go
+$ mkdir -p $GOPATH/src/github.com/kontena/
+$ ln -s $PWD $GOPATH/src/github.com/kontena/terraform-provider-kontena
 $ go get -v -d -t ./... && go test ./... && go install -v ./providers/...
 ```
 
