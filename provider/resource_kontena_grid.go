@@ -11,6 +11,8 @@ import (
 func resourceKontenaGrid() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"kontena_token": kontenaTokenSchema,
+
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -73,7 +75,11 @@ func syncKontenaGrid(rd *schema.ResourceData, grid api.Grid) {
 }
 
 func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
+
 	var gridParams = api.GridPOST{
 		Name:        rd.Get("name").(string),
 		InitialSize: rd.Get("initial_size").(int),
@@ -99,7 +105,7 @@ func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error 
 
 	log.Printf("[INFO] Kontena Grid: Create %#v", gridParams)
 
-	if grid, err := providerMeta.client.Grids.Create(gridParams); err != nil {
+	if grid, err := apiClient.Grids.Create(gridParams); err != nil {
 		return err
 	} else {
 		rd.SetId(grid.String())
@@ -110,9 +116,12 @@ func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaGridRead(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
 
-	if grid, err := providerMeta.client.Grids.Get(rd.Id()); err == nil {
+	if grid, err := apiClient.Grids.Get(rd.Id()); err == nil {
 		log.Printf("[INFO] Kontena Grid %v: Read: %#v", rd.Id(), grid)
 
 		syncKontenaGrid(rd, grid)
@@ -130,7 +139,11 @@ func resourceKontenaGridRead(rd *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
+
 	var gridParams = api.GridPUT{}
 
 	if rd.HasChange("default_affinity") {
@@ -154,7 +167,7 @@ func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error 
 
 	log.Printf("[INFO] Kontena Grid %v: Update %#v", rd.Id(), gridParams)
 
-	if grid, err := providerMeta.client.Grids.Update(rd.Id(), gridParams); err != nil {
+	if grid, err := apiClient.Grids.Update(rd.Id(), gridParams); err != nil {
 		return err
 	} else {
 		syncKontenaGrid(rd, grid)
@@ -164,11 +177,14 @@ func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaGridDelete(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
 
 	log.Printf("[INFO] Kontena Grid %v: Delete", rd.Id())
 
-	if err := providerMeta.client.Grids.Delete(rd.Id()); err != nil {
+	if err := apiClient.Grids.Delete(rd.Id()); err != nil {
 		return err
 	}
 

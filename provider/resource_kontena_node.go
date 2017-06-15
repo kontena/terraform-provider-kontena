@@ -12,6 +12,8 @@ import (
 func resourceKontenaNode() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"kontena_token": kontenaTokenSchema,
+
 			// configured identifier
 			"grid": &schema.Schema{
 				Type:     schema.TypeString,
@@ -111,7 +113,10 @@ func resourceKontenaNodeSync(rd *schema.ResourceData, node api.Node) {
 // Instead, nodes will be created once they connect for the first time
 // The kontena_node create method just waits for a node with the given grid/name to show up
 func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
 
 	var nodeID = client.NodeID{
 		Grid: rd.Get("grid").(string),
@@ -122,7 +127,7 @@ func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error 
 
 	// Wait for node to show up
 	for {
-		if node, err := providerMeta.client.Nodes.Get(nodeID); err == nil {
+		if node, err := apiClient.Nodes.Get(nodeID); err == nil {
 			rd.SetId(nodeID.String())
 			resourceKontenaNodeSync(rd, node)
 
@@ -140,14 +145,17 @@ func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaNodeRead(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
 
 	nodeID, err := client.ParseNodeID(rd.Id())
 	if err != nil {
 		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
 	}
 
-	if node, err := providerMeta.client.Nodes.Get(nodeID); err == nil {
+	if node, err := apiClient.Nodes.Get(nodeID); err == nil {
 		log.Printf("[INFO] Kontena Node %v: Read: %#v", rd.Id(), node)
 
 		resourceKontenaNodeSync(rd, node)
@@ -167,7 +175,10 @@ func resourceKontenaNodeRead(rd *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceKontenaNodeUpdate(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
 
 	nodeID, err := client.ParseNodeID(rd.Id())
 	if err != nil {
@@ -188,7 +199,7 @@ func resourceKontenaNodeUpdate(rd *schema.ResourceData, meta interface{}) error 
 
 	log.Printf("[INFO] Kontena Grid %v: Update %#v", rd.Id(), nodeParams)
 
-	if node, err := providerMeta.client.Nodes.Update(nodeID, nodeParams); err != nil {
+	if node, err := apiClient.Nodes.Update(nodeID, nodeParams); err != nil {
 		return err
 	} else {
 		resourceKontenaNodeSync(rd, node)
@@ -198,7 +209,10 @@ func resourceKontenaNodeUpdate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaNodeDelete(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(providerMeta)
+	var apiClient, err = resourceClient(rd, meta)
+	if err != nil {
+		return err
+	}
 
 	nodeID, err := client.ParseNodeID(rd.Id())
 	if err != nil {
@@ -207,7 +221,7 @@ func resourceKontenaNodeDelete(rd *schema.ResourceData, meta interface{}) error 
 
 	log.Printf("[INFO] Kontena Node %v: Delete", rd.Id())
 
-	if err := providerMeta.client.Nodes.Delete(nodeID); err != nil {
+	if err := apiClient.Nodes.Delete(nodeID); err != nil {
 		return err
 	}
 
