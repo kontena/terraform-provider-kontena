@@ -12,8 +12,6 @@ import (
 func resourceKontenaNode() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"kontena_token": kontenaTokenSchema,
-
 			// configured identifier
 			"grid": &schema.Schema{
 				Type:     schema.TypeString,
@@ -113,11 +111,7 @@ func resourceKontenaNodeSync(rd *schema.ResourceData, node api.Node) {
 // Instead, nodes will be created once they connect for the first time
 // The kontena_node create method just waits for a node with the given grid/name to show up
 func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
-
+	var apiClient = providerClient(meta)
 	var nodeID = client.NodeID{
 		Grid: rd.Get("grid").(string),
 		Name: rd.Get("name").(string),
@@ -145,10 +139,7 @@ func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaNodeRead(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
+	var apiClient = providerClient(meta)
 
 	nodeID, err := client.ParseNodeID(rd.Id())
 	if err != nil {
@@ -175,10 +166,7 @@ func resourceKontenaNodeRead(rd *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceKontenaNodeUpdate(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
+	var apiClient = providerClient(meta)
 
 	nodeID, err := client.ParseNodeID(rd.Id())
 	if err != nil {
@@ -209,10 +197,7 @@ func resourceKontenaNodeUpdate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaNodeDelete(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
+	var apiClient = providerClient(meta)
 
 	nodeID, err := client.ParseNodeID(rd.Id())
 	if err != nil {

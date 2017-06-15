@@ -11,8 +11,6 @@ import (
 func resourceKontenaGrid() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"kontena_token": kontenaTokenSchema,
-
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -75,11 +73,7 @@ func syncKontenaGrid(rd *schema.ResourceData, grid api.Grid) {
 }
 
 func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
-
+	var apiClient = providerClient(meta)
 	var gridParams = api.GridPOST{
 		Name:        rd.Get("name").(string),
 		InitialSize: rd.Get("initial_size").(int),
@@ -116,10 +110,7 @@ func resourceKontenaGridCreate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaGridRead(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
+	var apiClient = providerClient(meta)
 
 	if grid, err := apiClient.Grids.Get(rd.Id()); err == nil {
 		log.Printf("[INFO] Kontena Grid %v: Read: %#v", rd.Id(), grid)
@@ -139,11 +130,7 @@ func resourceKontenaGridRead(rd *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
-
+	var apiClient = providerClient(meta)
 	var gridParams = api.GridPUT{}
 
 	if rd.HasChange("default_affinity") {
@@ -177,10 +164,7 @@ func resourceKontenaGridUpdate(rd *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceKontenaGridDelete(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient, err = resourceClient(rd, meta)
-	if err != nil {
-		return err
-	}
+	var apiClient = providerClient(meta)
 
 	log.Printf("[INFO] Kontena Grid %v: Delete", rd.Id())
 

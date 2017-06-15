@@ -1,4 +1,4 @@
-package provider
+package main
 
 import (
 	"fmt"
@@ -7,11 +7,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/kontena/terraform-provider-kontena/client"
 )
-
-var kontenaTokenSchema = &schema.Schema{
-	Type:     schema.TypeString,
-	Optional: true,
-}
 
 func resourceKontenaToken() *schema.Resource {
 	return &schema.Resource{
@@ -45,7 +40,7 @@ func resourceKontenaTokenCreate(rd *schema.ResourceData, meta interface{}) error
 		return err
 
 	} else {
-		log.Printf("[DEBUG] Kontena Token: Create code=%v: %#v", code, clientToken)
+		log.Printf("[DEBUG] Kontena-OAuth2 Token: Create code=%v: %#v", code, clientToken)
 
 		rd.Set("token", clientToken.AccessToken)
 		rd.SetId(tokenID(clientToken))
@@ -66,14 +61,14 @@ func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
 	if apiClient, err := providerMeta.connectClient(clientToken); err != nil {
 		return err
 	} else if user, err := apiClient.Users.GetUser(); err == nil {
-		log.Printf("[INFO] Kontena Token %v: Read code=%v token=%v ok: %#v", rd.Id(), code, token, user)
+		log.Printf("[INFO] Kontena-OAuth2 Token %v: Read code=%v token=%v ok: %#v", rd.Id(), code, token, user)
 	} else if forbiddenError, ok := err.(client.ForbiddenError); ok {
-		log.Printf("[INFO] Kontena Token %v: Read code=%v token=%v gone: %v", rd.Id(), code, token, forbiddenError)
+		log.Printf("[INFO] Kontena-OAuth2 Token %v: Read code=%v token=%v gone: %v", rd.Id(), code, token, forbiddenError)
 
 		rd.SetId("")
 
 	} else {
-		log.Printf("[INFO] Kontena Token %v: Read code=%v token=%v err: %v", rd.Id(), code, token, err)
+		log.Printf("[INFO] Kontena-OAuth2 Token %v: Read code=%v token=%v err: %v", rd.Id(), code, token, err)
 
 		return err
 	}
@@ -82,7 +77,7 @@ func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceKontenaTokenDelete(rd *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] Kontena Token %v: Delete", rd.Id())
+	log.Printf("[DEBUG] Kontena-OAuth2 Token %v: Delete", rd.Id())
 
 	// TODO: revoke
 
