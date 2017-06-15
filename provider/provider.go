@@ -32,12 +32,7 @@ func provider() *schema.Provider {
 
 type providerMeta struct {
 	config        client.Config
-	tokens        map[string]*client.Token
 	defaultClient *client.Client
-}
-
-func (providerMeta *providerMeta) registerToken(id string, token *client.Token) {
-	providerMeta.tokens[id] = token
 }
 
 func (providerMeta *providerMeta) connectClient(token *client.Token) (*client.Client, error) {
@@ -54,9 +49,7 @@ func (providerMeta *providerMeta) resourceClient(rd *schema.ResourceData) (*clie
 		return providerMeta.defaultClient, nil
 	} else if tokenID := value.(string); tokenID == "" {
 		return nil, fmt.Errorf("Empty kontena_token given")
-	} else if token, ok := providerMeta.tokens[tokenID]; !ok {
-		return nil, fmt.Errorf("Missing kontena_token=%v", tokenID)
-	} else if client, err := providerMeta.connectClient(token); err != nil {
+	} else if client, err := providerMeta.connectClient(client.MakeToken(tokenID)); err != nil {
 		return nil, err
 	} else {
 		return client, nil
@@ -71,7 +64,6 @@ func resourceClient(rd *schema.ResourceData, meta interface{}) (*client.Client, 
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	var meta = providerMeta{
-		tokens: make(map[string]*client.Token),
 		config: client.Config{
 			URL: d.Get("url").(string),
 		},

@@ -33,15 +33,13 @@ func resourceKontenaToken() *schema.Resource {
 	}
 }
 
-func tokenHash(token *client.Token) string {
+func tokenID(token *client.Token) string {
 	return fmt.Sprintf("%s", token.AccessToken)
 }
 
 func resourceKontenaTokenSync(rd *schema.ResourceData, providerMeta *providerMeta, token *client.Token) {
 	rd.Set("token", token.AccessToken)
-	rd.SetId(tokenHash(token))
-
-	providerMeta.registerToken(rd.Id(), token)
+	rd.SetId(tokenID(token))
 }
 
 func resourceKontenaTokenCreate(rd *schema.ResourceData, meta interface{}) error {
@@ -61,14 +59,11 @@ func resourceKontenaTokenCreate(rd *schema.ResourceData, meta interface{}) error
 }
 
 func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
-	var providerMeta = meta.(*providerMeta)
 	var token = rd.Get("token").(string)
 
 	var clientToken = client.MakeToken(token)
 
 	log.Printf("[INFO] Kontena Token %v: Read: %#v", rd.Id(), clientToken)
-
-	resourceKontenaTokenSync(rd, providerMeta, clientToken)
 
 	return nil
 }
