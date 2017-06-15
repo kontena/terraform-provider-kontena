@@ -33,9 +33,10 @@ type providerMeta struct {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	var accessToken = d.Get("access_token").(string)
 	var config = client.Config{
-		URL:         d.Get("url").(string),
-		AccessToken: d.Get("access_token").(string),
+		URL:   d.Get("url").(string),
+		Token: client.MakeToken(accessToken),
 	}
 
 	if client, err := config.MakeClient(); err != nil {
