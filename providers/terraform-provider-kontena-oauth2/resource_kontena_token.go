@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/kontena/terraform-provider-kontena/client"
+	"github.com/kontena/kontena-client-go/client"
 )
 
 func resourceKontenaToken() *schema.Resource {

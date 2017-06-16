@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/kontena/terraform-provider-kontena/client"
+	"github.com/kontena/kontena-client-go/client"
 )
 
 func Provider() terraform.ResourceProvider {

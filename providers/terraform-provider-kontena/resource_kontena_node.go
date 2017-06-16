@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/kontena/terraform-provider-kontena/api"
-	"github.com/kontena/terraform-provider-kontena/client"
+	"github.com/kontena/kontena-client-go/api"
+	"github.com/kontena/kontena-client-go/client"
 )
 
 func resourceKontenaNode() *schema.Resource {
