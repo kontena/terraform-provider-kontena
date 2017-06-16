@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -46,9 +47,14 @@ func providerClient(meta interface{}) *client.Client {
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	var meta = providerMeta{
 		config: client.Config{
-			URL:   d.Get("url").(string),
-			Token: client.MakeToken(d.Get("token").(string)),
+			URL: d.Get("url").(string),
 		},
+	}
+
+	if token, err := client.MakeToken(d.Get("token").(string)); err != nil {
+		return nil, fmt.Errorf("Invalid token: %v", err)
+	} else {
+		meta.config.Token = token
 	}
 
 	log.Printf("[DEBUG] Kontena: config %#v", meta.config)

@@ -55,10 +55,11 @@ func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
 	var code = rd.Get("code").(string)
 	var token = rd.Get("token").(string)
 
-	var clientToken = client.MakeToken(token)
-
 	// check token still exists
-	if apiClient, err := providerMeta.connectClient(clientToken); err != nil {
+	if clientToken, err := client.MakeToken(token); err != nil {
+		// XXX: corrupt, force re-exchange?
+		return err
+	} else if apiClient, err := providerMeta.connectClient(clientToken); err != nil {
 		return err
 	} else if user, err := apiClient.Users.GetUser(); err == nil {
 		log.Printf("[INFO] Kontena-OAuth2 Token %v: Read code=%v token=%v ok: %#v", rd.Id(), code, token, user)
