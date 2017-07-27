@@ -45,13 +45,15 @@ func providerClient(meta interface{}) *client.Client {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	var logger = Logger{}
 	var meta = providerMeta{
 		config: client.Config{
-			URL: d.Get("url").(string),
+			URL:    d.Get("url").(string),
+			Logger: &logger,
 		},
 	}
 
-	log.Printf("[DEBUG] Kontena: config %#v", meta.config)
+	logger.Debugf("config %#v", meta.config)
 
 	if tokenValue, ok := d.GetOk("token"); !ok {
 		log.Printf("[WARN] Missing token")
@@ -61,7 +63,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		meta.config.Token = token
 	}
 
-	log.Printf("[DEBUG] Kontena: connect %v (token %v)", meta.config.URL, meta.config.Token)
+	logger.Debugf("connect %v (token %v)", meta.config.URL, meta.config.Token)
 
 	// do not test connection; provider can be configured without any url/token when planning
 	if client, err := meta.config.MakeClient(); err != nil {
@@ -69,7 +71,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	} else {
 		meta.client = client
 
-		log.Printf("[INFO] Kontena: client %v", meta.client)
+		logger.Infof("client %v", meta.client)
 	}
 
 	return &meta, nil
