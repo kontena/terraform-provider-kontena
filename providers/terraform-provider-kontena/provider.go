@@ -51,15 +51,20 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		},
 	}
 
-	if token, err := client.MakeToken(d.Get("token").(string)); err != nil {
+	log.Printf("[DEBUG] Kontena: config %#v", meta.config)
+
+	if tokenValue, ok := d.GetOk("token"); !ok {
+		log.Printf("[WARN] Missing token")
+	} else if token, err := client.MakeToken(tokenValue.(string)); err != nil {
 		return nil, fmt.Errorf("Invalid token: %v", err)
 	} else {
 		meta.config.Token = token
 	}
 
-	log.Printf("[DEBUG] Kontena: config %#v", meta.config)
+	log.Printf("[DEBUG] Kontena: connect %v (token %v)", meta.config.URL, meta.config.Token)
 
-	if client, err := meta.config.Connect(); err != nil {
+	// do not test connection; provider can be configured without any url/token when planning
+	if client, err := meta.config.MakeClient(); err != nil {
 		return nil, err
 	} else {
 		meta.client = client
