@@ -23,12 +23,6 @@ func resourceKontenaNode() *schema.Resource {
 				ForceNew: true,
 			},
 
-			// computed identifier
-			"id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-
 			// updatable attributes
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
@@ -45,6 +39,10 @@ func resourceKontenaNode() *schema.Resource {
 			},
 
 			// computed attributes
+			"node_id": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"node_number": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -100,6 +98,7 @@ func setKontenaNode(rd *schema.ResourceData, node api.Node) {
 	rd.Set("grid", node.Grid.Name)
 	rd.Set("name", node.Name)
 	rd.Set("id", node.ID)
+	rd.Set("node_id", node.NodeID)
 	rd.Set("labels", node.Labels)
 
 	rd.Set("node_number", node.NodeNumber)
