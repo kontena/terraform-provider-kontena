@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/kontena/kontena-client-go/api"
@@ -31,6 +30,11 @@ func resourceKontenaNode() *schema.Resource {
 			},
 
 			// updatable attributes
+			"token": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			},
 			"labels": &schema.Schema{
 				Type: schema.TypeList,
 				Elem: &schema.Schema{
@@ -92,7 +96,7 @@ func resourceKontenaNode() *schema.Resource {
 	}
 }
 
-func resourceKontenaNodeSync(rd *schema.ResourceData, node api.Node) {
+func setKontenaNode(rd *schema.ResourceData, node api.Node) {
 	rd.Set("grid", node.Grid.Name)
 	rd.Set("name", node.Name)
 	rd.Set("id", node.ID)
@@ -107,106 +111,130 @@ func resourceKontenaNodeSync(rd *schema.ResourceData, node api.Node) {
 	rd.Set("docker_version", node.DockerVersion)
 }
 
-// The Kontena nodes API does not support POST to create nodes
-// Instead, nodes will be created once they connect for the first time
-// The kontena_node create method just waits for a node with the given grid/name to show up
-func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient = providerClient(meta)
-	var nodeID = client.NodeID{
-		Grid: rd.Get("grid").(string),
-		Name: rd.Get("name").(string),
+func getKontenaNodeLabels(rd *schema.ResourceData) *api.NodeLabels {
+	var labels = make(api.NodeLabels, 0)
+
+	for _, value := range rd.Get("labels").([]interface{}) {
+		labels = append(labels, value.(string))
 	}
 
-	log.Printf("[INFO] Kontena Node: Create %v", nodeID)
+	return &labels
+}
 
-	// Wait for node to show up
-	for {
-		if node, err := apiClient.Nodes.Get(nodeID); err == nil {
-			rd.SetId(nodeID.String())
-			resourceKontenaNodeSync(rd, node)
+// Get and sync node token from API
+func readKontenaNodeToken(providerMeta *providerMeta, rd *schema.ResourceData) error {
+	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
+		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
 
-			break
+	} else if nodeToken, err := providerMeta.client.Nodes.GetToken(nodeID); err == nil {
+		providerMeta.logger.Infof("Node %v: Read token: %#v", rd.Id(), nodeToken)
 
-		} else if _, ok := err.(client.NotFoundError); ok {
-			continue
+		rd.Set("token", nodeToken.Token) // XXX: current 1.4.0.pre5 returns null instead of HTTP 404
 
-		} else {
-			return err
-		}
+	} else if _, ok := err.(client.NotFoundError); ok {
+		providerMeta.logger.Infof("Node %v: Read token gone", rd.Id())
+
+		rd.Set("token", "")
+
+	} else {
+		providerMeta.logger.Warnf("Node %v: Read token error: %v", rd.Id(), err)
+
+		return err
+	}
+
+	return nil
+}
+
+func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error {
+	var providerMeta = meta.(*providerMeta)
+	var gridName = rd.Get("grid").(string)
+	var nodeName = rd.Get("name").(string)
+
+	var nodeParams = api.NodePOST{
+		Name:   nodeName,
+		Token:  rd.Get("token").(string),
+		Labels: getKontenaNodeLabels(rd),
+	}
+
+	providerMeta.logger.Infof("Node: Create %v/%v: %#v", gridName, nodeName, nodeParams)
+
+	if node, err := providerMeta.client.Nodes.Create(gridName, nodeParams); err != nil {
+		return fmt.Errorf("Node create: %v", err)
+
+	} else if nodeID, err := client.ParseNodeID(node.ID); err != nil {
+		return fmt.Errorf("Invalid nodeID %v: %v", node.ID, err)
+
+	} else {
+		rd.SetId(nodeID.String())
+		setKontenaNode(rd, node)
+	}
+
+	if err := readKontenaNodeToken(providerMeta, rd); err != nil {
+		return fmt.Errorf("Node token read: %v", err)
 	}
 
 	return nil
 }
 
 func resourceKontenaNodeRead(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient = providerClient(meta)
+	var providerMeta = meta.(*providerMeta)
 
-	nodeID, err := client.ParseNodeID(rd.Id())
-	if err != nil {
+	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
 		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
-	}
 
-	if node, err := apiClient.Nodes.Get(nodeID); err == nil {
-		log.Printf("[INFO] Kontena Node %v: Read: %#v", rd.Id(), node)
+	} else if node, err := providerMeta.client.Nodes.Get(nodeID); err == nil {
+		providerMeta.logger.Infof("Node %v: Read: %#v", rd.Id(), node)
 
-		resourceKontenaNodeSync(rd, node)
+		setKontenaNode(rd, node)
 
 	} else if _, ok := err.(client.NotFoundError); ok {
-		log.Printf("[INFO] Kontena Grid %v: Read gone", rd.Id())
+		providerMeta.logger.Infof("Node %v: Read gone", rd.Id())
 
 		rd.SetId("")
 
 	} else {
-		log.Printf("[INFO] Kontena Node %v: Read error: %v", rd.Id(), err)
+		providerMeta.logger.Warnf("Node %v: Read error: %v", rd.Id(), err)
 
 		return err
+	}
+
+	if err := readKontenaNodeToken(providerMeta, rd); err != nil {
+		return fmt.Errorf("Node token read: %v", err)
 	}
 
 	return nil
 }
 
+// TODO: token update
 func resourceKontenaNodeUpdate(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient = providerClient(meta)
-
-	nodeID, err := client.ParseNodeID(rd.Id())
-	if err != nil {
-		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
-	}
-
+	var providerMeta = meta.(*providerMeta)
 	var nodeParams = api.NodePUT{}
 
 	if rd.HasChange("labels") {
-		var labels = make(api.NodeLabels, 0)
-
-		for _, value := range rd.Get("labels").([]interface{}) {
-			labels = append(labels, value.(string))
-		}
-
-		nodeParams.Labels = &labels
+		nodeParams.Labels = getKontenaNodeLabels(rd)
 	}
 
-	log.Printf("[INFO] Kontena Grid %v: Update %#v", rd.Id(), nodeParams)
+	providerMeta.logger.Infof("Node %v: Update %#v", rd.Id(), nodeParams)
 
-	if node, err := apiClient.Nodes.Update(nodeID, nodeParams); err != nil {
+	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
+		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
+	} else if node, err := providerMeta.client.Nodes.Update(nodeID, nodeParams); err != nil {
 		return err
 	} else {
-		resourceKontenaNodeSync(rd, node)
+		setKontenaNode(rd, node)
 	}
 
 	return nil
 }
 
 func resourceKontenaNodeDelete(rd *schema.ResourceData, meta interface{}) error {
-	var apiClient = providerClient(meta)
+	var providerMeta = meta.(*providerMeta)
 
-	nodeID, err := client.ParseNodeID(rd.Id())
-	if err != nil {
+	providerMeta.logger.Infof("Node %v: Delete", rd.Id())
+
+	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
 		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
-	}
-
-	log.Printf("[INFO] Kontena Node %v: Delete", rd.Id())
-
-	if err := apiClient.Nodes.Delete(nodeID); err != nil {
+	} else if err := providerMeta.client.Nodes.Delete(nodeID); err != nil {
 		return err
 	}
 
