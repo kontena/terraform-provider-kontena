@@ -34,6 +34,7 @@ func provider() *schema.Provider {
 }
 
 type providerMeta struct {
+	logger *Logger
 	config client.Config
 	client *client.Client
 }
@@ -47,6 +48,7 @@ func providerClient(meta interface{}) *client.Client {
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	var logger = Logger{}
 	var meta = providerMeta{
+		logger: &logger,
 		config: client.Config{
 			URL:    d.Get("url").(string),
 			Logger: &logger,
