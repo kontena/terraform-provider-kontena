@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/kontena/kontena-client-go/api"
@@ -48,7 +47,7 @@ func tokenID(token *client.Token) string {
 	return fmt.Sprintf("%s", token.AccessToken)
 }
 
-func resourceKontenaTokenSync(providerMeta *providerMeta, rd *schema.ResourceData) error {
+func readKontenaToken(providerMeta *providerMeta, rd *schema.ResourceData) error {
 	var code = rd.Get("code").(string)
 	var token = rd.Get("token").(string)
 	var user api.User
@@ -57,22 +56,22 @@ func resourceKontenaTokenSync(providerMeta *providerMeta, rd *schema.ResourceDat
 	if clientToken, err := client.MakeToken(token); err != nil {
 		// XXX: corrupt, force re-exchange?
 		return err
-	} else if apiClient, err := providerMeta.connectClient(clientToken); err != nil {
+	} else if apiClient, err := providerMeta.connectClientWithToken(clientToken); err != nil {
 		return err
 	} else if getUser, err := apiClient.Users.GetUser(); err == nil {
-		log.Printf("[INFO] Kontena-OAuth2 Token %v: Read code=%v token=%v ok: %#v", rd.Id(), code, token, getUser)
+		providerMeta.logger.Infof("Token %v: Read code=%v token=%v ok: %#v", rd.Id(), code, token, getUser)
 
 		user = getUser
 
 	} else if forbiddenError, ok := err.(client.ForbiddenError); ok {
-		log.Printf("[INFO] Kontena-OAuth2 Token %v: Read code=%v token=%v gone: %v", rd.Id(), code, token, forbiddenError)
+		providerMeta.logger.Infof("Token %v: Read code=%v token=%v gone: %v", rd.Id(), code, token, forbiddenError)
 
 		rd.SetId("")
 
 		return nil
 
 	} else {
-		log.Printf("[INFO] Kontena-OAuth2 Token %v: Read code=%v token=%v err: %v", rd.Id(), code, token, err)
+		providerMeta.logger.Infof("Token %v: Read code=%v token=%v err: %v", rd.Id(), code, token, err)
 
 		return err
 	}
@@ -97,24 +96,26 @@ func resourceKontenaTokenCreate(rd *schema.ResourceData, meta interface{}) error
 		return err
 
 	} else {
-		log.Printf("[DEBUG] Kontena-OAuth2 Token: Create code=%v: %#v", code, clientToken)
+		providerMeta.logger.Infof("Token: Create code=%v: %#v", code, clientToken)
 
 		rd.Set("token", clientToken.AccessToken)
 		rd.SetId(tokenID(clientToken))
 	}
 
 	// sync
-	return resourceKontenaTokenSync(providerMeta, rd)
+	return readKontenaToken(providerMeta, rd)
 }
 
 func resourceKontenaTokenRead(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(*providerMeta)
 
-	return resourceKontenaTokenSync(providerMeta, rd)
+	return readKontenaToken(providerMeta, rd)
 }
 
 func resourceKontenaTokenDelete(rd *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] Kontena-OAuth2 Token %v: Delete", rd.Id())
+	var providerMeta = meta.(*providerMeta)
+
+	providerMeta.logger.Infof("Token %v: Delete", rd.Id())
 
 	// TODO: revoke
 

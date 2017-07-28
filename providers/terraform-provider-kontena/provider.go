@@ -26,8 +26,9 @@ func provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"kontena_grid": resourceKontenaGrid(),
-			"kontena_node": resourceKontenaNode(),
+			"kontena_token": resourceKontenaToken(),
+			"kontena_grid":  resourceKontenaGrid(),
+			"kontena_node":  resourceKontenaNode(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
@@ -43,6 +44,16 @@ func providerClient(meta interface{}) *client.Client {
 	var providerMeta = meta.(*providerMeta)
 
 	return providerMeta.client
+}
+
+// Connect with token
+func (providerMeta *providerMeta) connectClientWithToken(token *client.Token) (*client.Client, error) {
+	var config = providerMeta.config
+	config.Token = token
+
+	providerMeta.logger.Debugf("connect %#v (token=%#v)", config, token)
+
+	return config.Connect()
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
