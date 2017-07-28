@@ -108,10 +108,15 @@ output "KOTNENA_TOKEN" {
 ## Example
 ### `terraform show`
 ```
-kontena-oauth2_token.admin:
-  id = b0...17
-  code = bsF...NBN
-  token = b08....5ad17
+kontena_token.admin:
+  id = 971...
+  code = bsF...
+  email = admin
+  roles.# = 1
+  roles.0 = master_admin
+  token = 971...
+  user = admin
+
 kontena_grid.grid:
   id = test
   default_affinity.# = 0
@@ -119,18 +124,42 @@ kontena_grid.grid:
   name = test
   subnet = 10.81.0.0/16
   supernet = 10.80.0.0/12
-  token = baCP...qt+mpw==
+  token = Gc...
   trusted_subnets.# = 0
-kontena_node.node:
+
+module.digitalocean-node1.kontena_node.node:
   id = test/terraform-test-node1
-  agent_version = 1.3.0
+  agent_version = 1.4.0.pre5
+  docker_version = 1.12.6
+  grid = test
+  initial_node = false
+  labels.# = 3
+  labels.0 = provider=digitalocean
+  labels.1 = region=fra1
+  labels.2 = az=fra1
+  name = terraform-test-node1
+  node_id = AHBV:DHKM:5J3Z:WST3:DO2Q:Q2AG:T6NM:BBYB:QGN5:G4Y6:7GXZ:4QIT
+  node_number = 2
+  overlay_ip = 10.81.0.2
+  private_ip = 207.154.200.134
+  public_ip = 207.154.200.134
+  token = cNr...343g==
+module.digitalocean-node2.kontena_node.node:
+  id = test/terraform-test-node2
+  agent_version = 1.4.0.pre5
   docker_version = 1.12.6
   grid = test
   initial_node = true
-  labels.# = 0
-  name = terraform-test-node1
+  labels.# = 3
+  labels.0 = provider=digitalocean
+  labels.1 = region=fra1
+  labels.2 = az=fra1
+  name = terraform-test-node2
+  node_id = PBOE:X2WG:ULOL:O2YJ:6C3L:P32Z:P2Y3:EGAR:27AJ:NMXG:Z2SU:TWFZ
   node_number = 1
   overlay_ip = 10.81.0.1
-  private_ip = 138.68.79.119
-  public_ip = 138.68.79.119
+  private_ip = 46.101.119.165
+  public_ip = 46.101.119.165
+  token = cFdn...lQ==
+
 ```
