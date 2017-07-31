@@ -20,6 +20,14 @@ func provider() *schema.Provider {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"ssl_cert_pem": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"ssl_cert_cn": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -61,8 +69,10 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	var meta = providerMeta{
 		logger: &logger,
 		config: client.Config{
-			URL:    d.Get("url").(string),
-			Logger: &logger,
+			URL:           d.Get("url").(string),
+			SSLCertPEM:    []byte(d.Get("ssl_cert_pem").(string)),
+			SSLServerName: d.Get("ssl_cert_cn").(string),
+			Logger:        &logger,
 		},
 	}
 

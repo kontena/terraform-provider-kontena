@@ -128,7 +128,7 @@ func readKontenaNodeToken(providerMeta *providerMeta, rd *schema.ResourceData) e
 	} else if nodeToken, err := providerMeta.client.Nodes.GetToken(nodeID); err == nil {
 		providerMeta.logger.Infof("Node %v: Read token: %#v", rd.Id(), nodeToken)
 
-		rd.Set("token", nodeToken.Token) // XXX: current 1.4.0.pre5 returns null instead of HTTP 404
+		rd.Set("token", nodeToken.Token)
 
 	} else if _, ok := err.(client.NotFoundError); ok {
 		providerMeta.logger.Infof("Node %v: Read token gone", rd.Id())
