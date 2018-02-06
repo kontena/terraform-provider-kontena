@@ -607,18 +607,18 @@
 		{
 			"checksumSHA1": "uQ9b0rYXxcuCjE2p0fdMUiUaKC0=",
 			"path": "github.com/kontena/kontena-client-go/api",
-			"revision": "ed47dd060d2874b1151574bc9e3d3a1f292e7f1c",
-			"revisionTime": "2018-02-06T17:02:51Z",
-			"version": "feature/external-registries",
-			"versionExact": "feature/external-registries"
+			"revision": "b9a6adb037dd851abdd0a4272f056b65fbd85040",
+			"revisionTime": "2018-02-06T20:11:26Z",
+			"version": "master",
+			"versionExact": "master"
 		},
 		{
 			"checksumSHA1": "S9eXhChnB5SEpGf83HNW4PDYwuI=",
 			"path": "github.com/kontena/kontena-client-go/client",
-			"revision": "ed47dd060d2874b1151574bc9e3d3a1f292e7f1c",
-			"revisionTime": "2018-02-06T17:02:51Z",
-			"version": "feature/external-registries",
-			"versionExact": "feature/external-registries"
+			"revision": "b9a6adb037dd851abdd0a4272f056b65fbd85040",
+			"revisionTime": "2018-02-06T20:11:26Z",
+			"version": "master",
+			"versionExact": "master"
 		},
 		{
 			"checksumSHA1": "1otkAg+0Q9NksNSuQ3ijCW0xHxE=",
