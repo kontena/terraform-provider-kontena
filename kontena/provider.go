@@ -70,10 +70,15 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		logger: &logger,
 		config: client.Config{
 			URL:           d.Get("url").(string),
-			SSLCertPEM:    []byte(d.Get("ssl_cert_pem").(string)),
-			SSLServerName: d.Get("ssl_cert_cn").(string),
 			Logger:        &logger,
 		},
+	}
+
+	if sslCertPEM, ok := d.GetOk("ssl_cert_pem"); ok {
+		meta.config.SSLCertPEM = []byte(sslCertPEM.(string))
+	}
+	if sslServerName, ok := d.GetOk("ssl_cert_cn"); ok {
+		meta.config.SSLServerName = sslServerName.(string)
 	}
 
 	logger.Debugf("config %#v", meta.config)
