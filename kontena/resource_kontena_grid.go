@@ -59,6 +59,9 @@ func resourceKontenaGrid() *schema.Resource {
 		Read:   resourceKontenaGridRead,
 		Update: resourceKontenaGridUpdate,
 		Delete: resourceKontenaGridDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 
