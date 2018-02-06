@@ -12,7 +12,7 @@ provider "kontena" {
 ## Arguments
 
 Argument        | Type   |          | Description
-----------------+--------+----------+------
+----------------|--------|----------|------
 `url`           | String | Required | `http://` or `https://` URL
 `token`         | String | Optional | Access token
 `ssl_cert_pem`  | String | Optional | Validate `https` certificate using PEM-encoded CA cert

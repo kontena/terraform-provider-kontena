@@ -18,7 +18,7 @@ resource "kontena_node" "node" {
 ## Arguments
 
 Argument        | Type          |                     | Description
-----------------+---------------+---------------------+-------------
+----------------|---------------|---------------------|-------------
 `grid`          | String        | Required            | Grid name
 `name`          | String        | Required            | Node name (unique)
 `token`         | String        | Optional, Updatable | Node token (if not using Grid token)
@@ -30,7 +30,7 @@ Argument        | Type          |                     | Description
 The following computed attributes are exported:
 
 Attribute         | Type        | Description
-------------------+-------------+--------------------------
+------------------|-------------|--------------------------
 `node_id`         | String      | Docker ID
 `node_number`     | Integer     | Unique node number within grid
 `initial_node`    | Boolean     | Node is a [Grid Initial Node](https://kontena.io/docs/using-kontena/#initial-nodes)
