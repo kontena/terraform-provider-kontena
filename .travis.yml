@@ -17,7 +17,6 @@ deploy:
   provider: releases
   api_key:
     secure: "SJZmLyNK59Zzg2XbNFrqmzsBvpjEhhpaUKtRtn4VoaGZHPS1ietFnM88tD8M5PS802Hji3PTv/X+rLY2K5IBSEAiXkc+6QlmqBK9FXQ0O+oM6xl1hSBV/paVE7yoiwfkf1/cpJXcBFn5jz2UE/kXQoi+awtakN0RKzDKKIRDNSdDUn85tuRDpAKPMCy2B45GKbLOlURzAHL7UgusnHLtd4dwxO6vRxzeUzYc6F6Qa+gf8LMU8iYLnzZ8xVf8eIQvfvFyJijWxbKX4WIgYjpHh6CuecDM1E0sxkyrR3Y8foCBsr+I/AaWwcqd15/itZYpJx5Yh1Sj3BYEq0+dMJV8P4jF/nEhXLPl1xmaHfwK+sJhneIkfWHACvL1/zU7gBZbCBsP1RrtkqQlz+OjuGAF5E5xi5qKB2JRNtSZz+37+03ua71vCCndV2L2hsSGIqOZO7EcvuqnKe+HMRjBOpjvZLQvvinXzSKnvvDEzXDR1gdLWPLqXmo8Xu0C7h/7jYK5CE2ZXiZzd31Ma5I5UgmIPyENK7pNeBxZlMLVyNPUn7idAYd060kmhNZKwOxDy8pIBy2mJdsuQN371c4FKiPu9+YkmSk/Q27s3w7On7HZG0y3kPktAh4D9Kn769BkXtwVP0fEXMnyasHZ+IPtxKHzzZaJrat2bQ8g67j3pvHXt1U="
-
   file_glob: true
   file:
     - build/dist/SHA256SUM
