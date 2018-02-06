@@ -6,7 +6,7 @@
 
 Install latest release version from GitHub to the terraform [third-party plugins](https://www.terraform.io/docs/configuration/providers.html#third-party-plugins) directory:
 
-    mkdir -p ~/.terraform.d/plugins && curl -L https://gh-releases.kontena.io/kontena/terraform-provider-kontena/gz/latest | tar -C ~/.terraform.d/plugins xzv
+    mkdir -p ~/.terraform.d/plugins && curl -L https://gh-releases.kontena.io/kontena/terraform-provider-kontena/gz/latest | tar -C ~/.terraform.d/plugins -xzv
 
 ## Development
 
