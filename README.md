@@ -34,6 +34,7 @@ See [Installing a Plugin](https://www.terraform.io/docs/plugins/basics.html#inst
 * [Resource `kontena_token`](docs/resource_kontena_token.md)
 * [Resource `kontena_grid`](docs/resource_kontena_grid.md)
 * [Resource `kontena_node`](docs/resource_kontena_node.md)
+* [Resource `kontena_external_registry`](docs/resource_kontena_external_registry.md)
 
 ### Example
 
