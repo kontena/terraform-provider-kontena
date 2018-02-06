@@ -43,3 +43,9 @@ kontena_external_registry.test:
   url = https://kontena-images.example.com
   username = test
 ```
+
+## Importing
+
+Existing `kontena_external_registry` resources can be imported using `terraform import kontena_external_registry.NAME <grid>/<name>`: `terraform import kontena_external_registry.test test/images.example.com`
+
+When importing, the `password` argument can be left as an empty string (`password = ""`). Otherwise terraform will forcibly re-create the resource to ensure that the password matches, because it cannot be read back from the API.

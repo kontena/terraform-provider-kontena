@@ -91,6 +91,9 @@ func resourceKontenaNode() *schema.Resource {
 		Read:   resourceKontenaNodeRead,
 		Update: resourceKontenaNodeUpdate,
 		Delete: resourceKontenaNodeDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 

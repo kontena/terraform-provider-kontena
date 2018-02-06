@@ -79,3 +79,7 @@ module.digitalocean-node1.kontena_node.node:
   public_ip = 207.154.200.134
   token = cNr...343g==
 ```
+
+## Importing
+
+Existing `kontena_node` resources can be imported using `terraform import kontena_node.NAME <grid>/<name>`: `terraform import kontena_node.node-1 test/node-1`

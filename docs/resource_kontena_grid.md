@@ -48,3 +48,7 @@ kontena_grid.grid:
   token = Gc...
   trusted_subnets.# = 0
 ```
+
+## Importing
+
+Existing `kontena_grid` resources can be imported using `terraform import kontena_grid.NAME <grid>`: `terraform import kontena_grid.test test`

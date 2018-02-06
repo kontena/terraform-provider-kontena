@@ -2,6 +2,7 @@ package kontena
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/kontena/kontena-client-go/api"
@@ -48,10 +49,28 @@ func resourceKontenaExternalRegistry() *schema.Resource {
 		Create: resourceKontenaExternalRegistryCreate,
 		Read:   resourceKontenaExternalRegistryRead,
 		Delete: resourceKontenaExternalRegistryDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 
+// TODO: this should be api.ExternalRegistryID.Grid
+func parseKontenaExternalRegistryID(id string) (grid, name string) {
+	parts := strings.Split(id, "/")
+
+	// XXX: errors?
+	return parts[0], parts[1]
+}
+
 func setKontenaExternalRegistry(rd *schema.ResourceData, externalRegistry api.ExternalRegistry) {
+	grid, _ := parseKontenaExternalRegistryID(rd.Id())
+
+	rd.Set("grid", grid)
+	rd.Set("url", externalRegistry.URL)
+	rd.Set("username", externalRegistry.Username)
+	rd.Set("email", externalRegistry.Email)
+
 	rd.Set("name", externalRegistry.Name)
 }
 
