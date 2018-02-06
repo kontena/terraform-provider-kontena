@@ -21,3 +21,4 @@ deploy:
   file:
     - build/dist/SHA256SUM
     - build/dist/*.zip
+    - build/dist/*.tar.gz

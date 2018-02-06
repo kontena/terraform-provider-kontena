@@ -1,13 +1,22 @@
 ## Requirements
 
 * [Terraform](https://www.terraform.io/downloads.html) 0.10+
-* [Go](https://golang.org/doc/install) 1.9+
 
-## Build
+## Install
+
+Install latest release version from GitHub to the terraform [third-party plugins](https://www.terraform.io/docs/configuration/providers.html#third-party-plugins) directory:
+
+  mkdir -p ~/.terraform.d/plugins && curl -L https://gh-releases.kontena.io/kontena/terraform-provider-kontena/gz/latest | tar -C ~/.terraform.d/plugins xzv
+
+## Development
 
     go get github.com/kontena/terraform-provider-kontena
 
-## Setup
+### Requirements
+
+* [Go](https://golang.org/doc/install) 1.9+
+
+### Setup
 
 See [Installing a Plugin](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin) from the Terraform docs:
 
