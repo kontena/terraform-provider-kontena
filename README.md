@@ -10,11 +10,13 @@ Install latest release version from GitHub to the terraform [third-party plugins
 
 ## Development
 
-    go get github.com/kontena/terraform-provider-kontena
-
 ### Requirements
 
 * [Go](https://golang.org/doc/install) 1.9+
+
+### Build
+
+    go get github.com/kontena/terraform-provider-kontena
 
 ### Setup
 
