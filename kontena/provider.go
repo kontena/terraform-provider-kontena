@@ -34,9 +34,10 @@ func provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"kontena_token": resourceKontenaToken(),
-			"kontena_grid":  resourceKontenaGrid(),
-			"kontena_node":  resourceKontenaNode(),
+			"kontena_token":             resourceKontenaToken(),
+			"kontena_grid":              resourceKontenaGrid(),
+			"kontena_node":              resourceKontenaNode(),
+			"kontena_external_registry": resourceKontenaExternalRegistry(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
