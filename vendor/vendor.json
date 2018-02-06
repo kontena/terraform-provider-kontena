@@ -1,0 +1,31 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "wJx4tEgz7ekk3HgsWmH4aGrg6B4=",
+			"path": "github.com/hashicorp/terraform/helper/schema",
+			"revision": "e0fd3ddd704b230897723a7ca251f36b71c2b67a",
+			"revisionTime": "2017-10-25T16:13:40Z",
+			"version": "v0.10",
+			"versionExact": "v0.10.8"
+		},
+		{
+			"checksumSHA1": "DqaoG++NXRCfvH/OloneLWrM+3k=",
+			"path": "github.com/hashicorp/terraform/plugin",
+			"revision": "e0fd3ddd704b230897723a7ca251f36b71c2b67a",
+			"revisionTime": "2017-10-25T16:13:40Z",
+			"version": "v0.10",
+			"versionExact": "v0.10.8"
+		},
+		{
+			"checksumSHA1": "ftaJwH2TwqV/a/XKfJVMFjNmVRo=",
+			"path": "github.com/hashicorp/terraform/terraform",
+			"revision": "e0fd3ddd704b230897723a7ca251f36b71c2b67a",
+			"revisionTime": "2017-10-25T16:13:40Z",
+			"version": "v0.10",
+			"versionExact": "v0.10.8"
+		}
+	],
+	"rootPath": "github.com/kontena/terraform-provider-kontena"
+}
