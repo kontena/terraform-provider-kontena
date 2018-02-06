@@ -24,6 +24,11 @@ See [Installing a Plugin](https://www.terraform.io/docs/plugins/basics.html#inst
 
     mkdir -p ~/.terraform.d/plugins && ln -s $GOPATH/bin/terraform-provider-kontena ~/.terraform.d/plugins/
 
+## Docs
+
+* [Provider `kontena`](docs/provider.md)
+* [Resource `kontena_grid`](docs/resource_kontena_grid.md)
+
 ## Usage
 
 ### Supported Kontena versions
@@ -70,41 +75,6 @@ output "grid_token" {
 }
 output "node_token" {
   value = "${kontena_node.node.token}"
-}
-```
-
-### Bootstrapping oauth2 token from the  `INITIAL_ADMIN_CODE`
-
-If you are provisioning the master itself via terraform with a pre-configured `INITIAL_ADMIN_CODE`, you can use the `kontena_token` resource to exchange the inital admin code for the admin token. You must use a second, aliased instance of the provider to do this:
-
-
-```
-module "digitalocean_master" {
-  ...
-}
-
-provider "kontena" {
-  alias = "master-bootstrap"
-  url = "${module.digitalocean_master.http_url}"
-}
-
-resource "kontena_token" "admin" {
-  provider = "kontena.master-bootstrap"
-
-  code = "${var.kontena-initial_admin_code}"
-}
-
-provider "kontena" {
-  url = "${module.digitalocean_master.http_url}"
-  token = "${kontena_token.admin.token}"
-}
-
-output "KONTENA_URI" {
-  value = "${module.digitalocean_master.http_url}"
-}
-
-output "KOTNENA_TOKEN" {
-  value = "${kontena_token.admin.token}"
 }
 ```
 
