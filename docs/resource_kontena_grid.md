@@ -33,3 +33,18 @@ Attribute   | Type    | Description
 `token`     | String  | Generated token for grid
 `subnet`    | String  | Default subnet for grid
 `supernet`  | String  | Default supernet for grid
+
+### Example
+
+#### `terraform show`
+```
+kontena_grid.grid:
+  id = test
+  default_affinity.# = 0
+  initial_size = 1
+  name = test
+  subnet = 10.81.0.0/16
+  supernet = 10.80.0.0/12
+  token = Gc...
+  trusted_subnets.# = 0
+```

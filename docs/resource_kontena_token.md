@@ -26,3 +26,17 @@ Attribute   | Type          | Description
 `user`      | String        | Kontena Master user associated with token
 `email`     | String        | Kontena Cloud login email for user
 `roles`     | List<String>  | Kontena Master user roles for token (e.g. `master_admin`)
+
+### Example
+
+#### `terraform show`
+```
+kontena_token.admin:
+  id = 971...
+  code = bsF...
+  email = admin
+  roles.# = 1
+  roles.0 = master_admin
+  token = 971...
+  user = admin
+```
