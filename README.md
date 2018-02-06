@@ -1,6 +1,7 @@
 ## Requirements
 
 * [Terraform](https://www.terraform.io/downloads.html) 0.10+
+* [Kontena](https://github.com/kontena/kontena) 1.4+
 
 ## Install
 
@@ -24,14 +25,9 @@ See [Installing a Plugin](https://www.terraform.io/docs/plugins/basics.html#inst
 
     mkdir -p ~/.terraform.d/plugins && ln -s $GOPATH/bin/terraform-provider-kontena ~/.terraform.d/plugins/
 
-## Usage
-
-### Supported Kontena versions
-
-Requires Kontena 1.4+
+## Documentation
 
 ### Provider
-
 * [Provider `kontena`](docs/provider.md)
 
 ### Resources
