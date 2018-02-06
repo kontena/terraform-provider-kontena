@@ -48,6 +48,9 @@ func resourceKontenaExternalRegistry() *schema.Resource {
 		Create: resourceKontenaExternalRegistryCreate,
 		Read:   resourceKontenaExternalRegistryRead,
 		Delete: resourceKontenaExternalRegistryDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 	}
 }
 
