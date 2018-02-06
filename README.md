@@ -4,17 +4,11 @@ Requires Go 1.8 for [`github.com/hashicorp/terraform`](https://github.com/hashic
 
 > If you wish to work on Terraform itself or any of its built-in providers, you'll first need Go installed on your machine (version 1.8+ is required).
 
-```
-$ export GOPATH=~/go
-$ mkdir -p $GOPATH/src/github.com/kontena/
-$ ln -s $PWD $GOPATH/src/github.com/kontena/terraform-provider-kontena
-$ go get -v -d -t ./... && go test ./... && go install -v ./providers/...
-```
+    $ go get -v -d -t github.com/kontena/terraform-provider-kontena && go test github.com/kontena/terraform-provider-kontena/... && go install -v github.com/kontena/terraform-provider-kontena
 
-Resulting binaries under `$GOPATH/bin`:
+Resulting binaries:
 
-* `terraform-provider-kontena`
-* `terraform-provider-kontena-oauth2`
+* `$GOPATH/bin/terraform-provider-kontena`
 
 ## Setup
 
@@ -25,7 +19,6 @@ Configure terraform to use the custom providers:
 ```
 providers {
   kontena = "/home/.../go/bin/terraform-provider-kontena"
-  kontena-oauth2 = "/home/.../go/bin/terraform-provider-kontena-oauth2"
 }
 ```
 
