@@ -1,16 +1,11 @@
 ## Requirements
 
 * [Terraform](https://www.terraform.io/downloads.html) 0.10+
-* [Go](https://golang.org/doc/install) 1.8+
-* [govendor](https://github.com/kardianos/govendor)
+* [Go](https://golang.org/doc/install) 1.9+
 
 ## Build
 
-    mkdir -p $GOPATH/src/github.com/kontena
-    git clone github.com/kontena/terraform-provider-kontena $GOPATH/src/github.com/kontena/terraform-provider-kontena
-    cd $GOPATH/src/github.com/kontena/terraform-provider-kontena
-    govendor sync
-    go test ./... && go install .
+    go get github.com/kontena/terraform-provider-kontena
 
 ## Setup
 
