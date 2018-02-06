@@ -1,28 +1,23 @@
+## Requirements
+
+* [Terraform](https://www.terraform.io/downloads.html) 0.10+
+* [Go](https://golang.org/doc/install) 1.8+
+* [govendor](https://github.com/kardianos/govendor)
+
 ## Build
 
-Requires Go 1.8 for [`github.com/hashicorp/terraform`](https://github.com/hashicorp/terraform#developing-terraform):
-
-> If you wish to work on Terraform itself or any of its built-in providers, you'll first need Go installed on your machine (version 1.8+ is required).
-
-    $ go get -v -d -t github.com/kontena/terraform-provider-kontena && go test github.com/kontena/terraform-provider-kontena/... && go install -v github.com/kontena/terraform-provider-kontena
-
-Resulting binaries:
-
-* `$GOPATH/bin/terraform-provider-kontena`
+    mkdir -p $GOPATH/src/github.com/kontena
+    git clone github.com/kontena/terraform-provider-kontena $GOPATH/src/github.com/kontena/terraform-provider-kontena
+    cd $GOPATH/src/github.com/kontena/terraform-provider-kontena
+    govendor sync
+    go test ./... && go install .
 
 ## Setup
 
-Configure terraform to use the custom providers:
+See [Installing a Plugin](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin) from the Terraform docs:
 
-#### `~/.terraformrc`
-
-```
-providers {
-  kontena = "/home/.../go/bin/terraform-provider-kontena"
-}
-```
-
-Note that `.terraformrc` does not support `~/go` path expansion.
+    mkdir -p ~/.terraform.d/plugins
+    ln -s $GOPATH/bin/terraform-provider-kontena ~/.terraform.d/plugins/
 
 ## Usage
 
