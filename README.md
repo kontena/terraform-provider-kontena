@@ -20,8 +20,7 @@ Install latest release version from GitHub to the terraform [third-party plugins
 
 See [Installing a Plugin](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin) from the Terraform docs:
 
-    mkdir -p ~/.terraform.d/plugins
-    ln -s $GOPATH/bin/terraform-provider-kontena ~/.terraform.d/plugins/
+    mkdir -p ~/.terraform.d/plugins && ln -s $GOPATH/bin/terraform-provider-kontena ~/.terraform.d/plugins/
 
 ## Usage
 
