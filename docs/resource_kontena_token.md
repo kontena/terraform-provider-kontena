@@ -20,12 +20,12 @@ Argument        | Type    |           | Description
 
 The following computed attributes are exported:
 
-Attribute   | Type          | Description
-------------|---------------|--------------------------
-`token`     | String        | OAuth2 token for `provider "kontena"`
-`user`      | String        | Kontena Master user associated with token
-`email`     | String        | Kontena Cloud login email for user
-`roles`     | List<String>  | Kontena Master user roles for token (e.g. `master_admin`)
+Attribute   | Type      | Description
+------------|-----------|--------------------------
+`token`     | String    | OAuth2 token for `provider "kontena"`
+`user`      | String    | Kontena Master user associated with token
+`email`     | String    | Kontena Cloud login email for user
+`roles`     | [String]  | Kontena Master user roles for token (e.g. `master_admin`)
 
 ### Example
 

@@ -17,12 +17,12 @@ resource "kontena_node" "node" {
 
 ## Arguments
 
-Argument        | Type          |                     | Description
-----------------|---------------|---------------------|-------------
-`grid`          | String        | Required            | Grid name
-`name`          | String        | Required            | Node name (unique)
-`token`         | String        | Optional, Updatable | Node token (if not using Grid token)
-`labels`        | List<String>  | Optional, Updatable | Node labels
+Argument        | Type     |                     | Description
+----------------|----------|---------------------|-------------
+`grid`          | String   | Required            | Grid name
+`name`          | String   | Required            | Node name (unique)
+`token`         | String   | Optional, Updatable | Node token (if not using Grid token)
+`labels`        | [String] | Optional, Updatable | Node labels
 
 
 ## Attributes

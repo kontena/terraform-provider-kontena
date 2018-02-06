@@ -21,8 +21,8 @@ Argument            | Type          |                     | Description
 `token`             | String        | Optional            | Override static token for grid
 `subnet`            | String        | Optional            | Override [overlay network subnet](https://kontena.io/docs/advanced/networking.html#subnet-and-supernet)
 `supernet`          | String        | Optional            | Override [overlay network supernet](https://kontena.io/docs/advanced/networking.html#subnet-and-supernet)
-`default_affinity`  | List<String>  | Optional, Updatable | Default [affinity](https://kontena.io/docs/using-kontena/affinities.html) for services
-`trusted_subnets`   | List<String>  | Optional, Updatable | Grid [Trusted Subnets](https://www.kontena.io/docs/advanced/grids.html#manage-kontena-platform-grid-trusted-subnets)
+`default_affinity`  | [String]      | Optional, Updatable | Default [affinity](https://kontena.io/docs/using-kontena/affinities.html) for services
+`trusted_subnets`   | [String]      | Optional, Updatable | Grid [Trusted Subnets](https://www.kontena.io/docs/advanced/grids.html#manage-kontena-platform-grid-trusted-subnets)
 
 ## Attributes
 
