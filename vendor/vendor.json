@@ -607,16 +607,16 @@
 		{
 			"checksumSHA1": "Dt3pWibVuXiOt1MvWY8jHb8MqBQ=",
 			"path": "github.com/kontena/kontena-client-go/api",
-			"revision": "4dfd5c13757693f079d28c4b6931d68f300702bd",
-			"revisionTime": "2018-02-12T09:49:12Z",
+			"revision": "8ca5d7a03d27cd51f85895a6580bad62cfae9bdb",
+			"revisionTime": "2018-02-12T11:15:24Z",
 			"version": "master",
 			"versionExact": "master"
 		},
 		{
-			"checksumSHA1": "0dAm6g1nLyGrHEyqyI0X844l5zY=",
+			"checksumSHA1": "O4bSJBoDhj2rfCSvIMH+tfdVQqo=",
 			"path": "github.com/kontena/kontena-client-go/client",
-			"revision": "4dfd5c13757693f079d28c4b6931d68f300702bd",
-			"revisionTime": "2018-02-12T09:49:12Z",
+			"revision": "8ca5d7a03d27cd51f85895a6580bad62cfae9bdb",
+			"revisionTime": "2018-02-12T11:15:24Z",
 			"version": "master",
 			"versionExact": "master"
 		},
