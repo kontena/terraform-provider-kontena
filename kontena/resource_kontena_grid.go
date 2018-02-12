@@ -18,7 +18,8 @@ func resourceKontenaGrid() *schema.Resource {
 			},
 			"initial_size": &schema.Schema{
 				Type:     schema.TypeInt,
-				Required: true,
+				Optional: true,
+				Computed: true,
 				ForceNew: true,
 			},
 			"token": &schema.Schema{
