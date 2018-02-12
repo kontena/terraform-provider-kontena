@@ -100,7 +100,7 @@ func resourceKontenaNode() *schema.Resource {
 func setKontenaNode(rd *schema.ResourceData, node api.Node) {
 	rd.Set("grid", node.Grid.Name)
 	rd.Set("name", node.Name)
-	rd.Set("id", node.ID)
+	rd.Set("id", node.ID.String())
 	rd.Set("node_id", node.NodeID)
 	rd.Set("labels", node.Labels)
 
@@ -125,7 +125,7 @@ func getKontenaNodeLabels(rd *schema.ResourceData) *api.NodeLabels {
 
 // Get and sync node token from API
 func readKontenaNodeToken(providerMeta *providerMeta, rd *schema.ResourceData) error {
-	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
+	if nodeID, err := api.ParseNodeID(rd.Id()); err != nil {
 		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
 
 	} else if nodeToken, err := providerMeta.client.Nodes.GetToken(nodeID); err == nil {
@@ -163,11 +163,9 @@ func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error 
 	if node, err := providerMeta.client.Nodes.Create(gridName, nodeParams); err != nil {
 		return fmt.Errorf("Node create: %v", err)
 
-	} else if nodeID, err := client.ParseNodeID(node.ID); err != nil {
-		return fmt.Errorf("Invalid nodeID %v: %v", node.ID, err)
-
 	} else {
-		rd.SetId(nodeID.String())
+		rd.SetId(node.ID.String())
+
 		setKontenaNode(rd, node)
 	}
 
@@ -181,7 +179,7 @@ func resourceKontenaNodeCreate(rd *schema.ResourceData, meta interface{}) error 
 func resourceKontenaNodeRead(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(*providerMeta)
 
-	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
+	if nodeID, err := api.ParseNodeID(rd.Id()); err != nil {
 		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
 
 	} else if node, err := providerMeta.client.Nodes.Get(nodeID); err == nil {
@@ -218,7 +216,7 @@ func resourceKontenaNodeUpdate(rd *schema.ResourceData, meta interface{}) error 
 
 	providerMeta.logger.Infof("Node %v: Update %#v", rd.Id(), nodeParams)
 
-	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
+	if nodeID, err := api.ParseNodeID(rd.Id()); err != nil {
 		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
 	} else if node, err := providerMeta.client.Nodes.Update(nodeID, nodeParams); err != nil {
 		return err
@@ -234,7 +232,7 @@ func resourceKontenaNodeDelete(rd *schema.ResourceData, meta interface{}) error 
 
 	providerMeta.logger.Infof("Node %v: Delete", rd.Id())
 
-	if nodeID, err := client.ParseNodeID(rd.Id()); err != nil {
+	if nodeID, err := api.ParseNodeID(rd.Id()); err != nil {
 		return fmt.Errorf("Invalid node ID %#v: %v", rd.Id(), err)
 	} else if err := providerMeta.client.Nodes.Delete(nodeID); err != nil {
 		return err
