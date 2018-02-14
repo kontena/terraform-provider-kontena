@@ -18,7 +18,8 @@ func resourceKontenaGrid() *schema.Resource {
 			},
 			"initial_size": &schema.Schema{
 				Type:     schema.TypeInt,
-				Required: true,
+				Optional: true,
+				Computed: true,
 				ForceNew: true,
 			},
 			"token": &schema.Schema{
@@ -67,8 +68,17 @@ func resourceKontenaGrid() *schema.Resource {
 
 func makeKontenaGridCreateParams(rd *schema.ResourceData) api.GridPOST {
 	var gridParams = api.GridPOST{
-		Name:        rd.Get("name").(string),
-		InitialSize: rd.Get("initial_size").(int),
+		Name: rd.Get("name").(string),
+	}
+
+	if value, ok := rd.GetOk("initial_size"); ok {
+		var initialSize = value.(int)
+
+		gridParams.InitialSize = initialSize
+	} else {
+		// computed default
+		// the zero-value will end up POSTing with { "initial_size": 0 }, which fails...
+		gridParams.InitialSize = 1
 	}
 
 	if value, ok := rd.GetOk("token"); ok {

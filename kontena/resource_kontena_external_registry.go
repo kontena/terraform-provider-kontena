@@ -2,7 +2,6 @@ package kontena
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/kontena/kontena-client-go/api"
@@ -55,18 +54,8 @@ func resourceKontenaExternalRegistry() *schema.Resource {
 	}
 }
 
-// TODO: this should be api.ExternalRegistryID.Grid
-func parseKontenaExternalRegistryID(id string) (grid, name string) {
-	parts := strings.Split(id, "/")
-
-	// XXX: errors?
-	return parts[0], parts[1]
-}
-
 func setKontenaExternalRegistry(rd *schema.ResourceData, externalRegistry api.ExternalRegistry) {
-	grid, _ := parseKontenaExternalRegistryID(rd.Id())
-
-	rd.Set("grid", grid)
+	rd.Set("grid", externalRegistry.ID.Grid)
 	rd.Set("url", externalRegistry.URL)
 	rd.Set("username", externalRegistry.Username)
 	rd.Set("email", externalRegistry.Email)
@@ -93,7 +82,7 @@ func resourceKontenaExternalRegistryCreate(rd *schema.ResourceData, meta interfa
 		return fmt.Errorf("ExternalRegistry create: %v", err)
 
 	} else {
-		rd.SetId(externalRegistry.ID)
+		rd.SetId(externalRegistry.ID.String())
 
 		providerMeta.logger.Infof("ExternalRegistry %v: Create: %#v", rd.Id(), externalRegistry)
 
@@ -105,9 +94,11 @@ func resourceKontenaExternalRegistryCreate(rd *schema.ResourceData, meta interfa
 
 func resourceKontenaExternalRegistryRead(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(*providerMeta)
-	var id = rd.Id()
 
-	if externalRegistry, err := providerMeta.client.ExternalRegistries.Get(id); err == nil {
+	if id, err := api.ParseExternalRegistryID(rd.Id()); err != nil {
+		return fmt.Errorf("Invalid ExternalRegistry ID %#v: %v", rd.Id(), err)
+
+	} else if externalRegistry, err := providerMeta.client.ExternalRegistries.Get(id); err == nil {
 		providerMeta.logger.Infof("ExternalRegistry %v: Read: %#v", rd.Id(), externalRegistry)
 
 		setKontenaExternalRegistry(rd, externalRegistry)
@@ -128,11 +119,13 @@ func resourceKontenaExternalRegistryRead(rd *schema.ResourceData, meta interface
 
 func resourceKontenaExternalRegistryDelete(rd *schema.ResourceData, meta interface{}) error {
 	var providerMeta = meta.(*providerMeta)
-	var id = rd.Id()
 
-	providerMeta.logger.Infof("ExternalRegistry %v: Delete", id)
+	providerMeta.logger.Infof("ExternalRegistry %v: Delete", rd.Id())
 
-	if err := providerMeta.client.ExternalRegistries.Delete(id); err != nil {
+	if id, err := api.ParseExternalRegistryID(rd.Id()); err != nil {
+		return fmt.Errorf("Invalid ExternalRegistry ID %#v: %v", rd.Id(), err)
+
+	} else if err := providerMeta.client.ExternalRegistries.Delete(id); err != nil {
 		return err
 	}
 
